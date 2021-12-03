@@ -34,5 +34,5 @@ pub fn run() {
     }
 
     println!("Number of increases: {:?}", counter);
-    println!("Number of increases(sums): {:?}", sum_counter);
+    println!("Number of increased sums: {:?}", sum_counter);
 }
