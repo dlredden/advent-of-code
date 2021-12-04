@@ -39,7 +39,6 @@ pub fn run() {
 	};
 
 	for line in lines {
-		if line.is_empty() { continue }
 		let pos: Vec<&str> = line.split(" ").collect();
 		match pos[0] {
 			"forward" => position.forward(pos[1].parse::<i32>().unwrap()),
