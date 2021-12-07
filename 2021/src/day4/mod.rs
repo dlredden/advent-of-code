@@ -1,12 +1,13 @@
 use std::fs;
 use regex::Regex;
+use futures::future;
 
 mod board;
 use board::Board;
 use board::Number;
 
-pub fn run() {
-	let data = fs::read_to_string("./data/test.txt").expect("Error reading file!");
+pub async fn run() {
+	let data = fs::read_to_string("./data/day4.txt").expect("Error reading file!");
 	let mut lines: Vec<&str> = data.lines().collect();
 	
 	// The first row are the drawn numbers
@@ -34,6 +35,14 @@ pub fn run() {
 		board_number += 1;
 	}
 
-	println!("Numbers: {:?}", bingo_numbers);
-	println!("Boards: {:?}", boards);
+	for num in bingo_numbers {
+		let marks = boards.iter().map(|b| b.mark(num));
+		let responses = future::join_all(marks).await;
+		let winner: Vec<&isize> = responses.iter().filter(|&&b| b.is_positive()).collect();
+		// println!("Responses: {:?} {:?}", responses, winner);
+		if winner.len() == 1 {
+			println!("Winning Bingo: {}", winner[0]);
+			// break
+		}
+	}
 }
