@@ -173,7 +173,7 @@ mod tests {
         let bi = Bresenham::new((0, 1), (6, 4));
         let res: Vec<_> = bi.collect();
 
-        assert_eq!(res, [(0, 1), (1, 1), (2, 2), (3, 2), (4, 3), (5, 3)])
+        assert_eq!(res, [(0, 1), (1, 1), (2, 2), (3, 2), (4, 3), (5, 3), (6, 4)])
     }
 
     #[test]
@@ -181,7 +181,7 @@ mod tests {
         let bi = Bresenham::new((6, 4), (0, 1));
         let res: Vec<_> = bi.collect();
 
-        assert_eq!(res, [(6, 4), (5, 4), (4, 3), (3, 3), (2, 2), (1, 2)])
+        assert_eq!(res, [(6, 4), (5, 4), (4, 3), (3, 3), (2, 2), (1, 2), (0, 1)])
     }
 
     #[test]
@@ -189,7 +189,7 @@ mod tests {
         let bi = Bresenham::new((2, 3), (5, 3));
         let res: Vec<_> = bi.collect();
 
-        assert_eq!(res, [(2, 3), (3, 3), (4, 3)]);
+        assert_eq!(res, [(2, 3), (3, 3), (4, 3), (5, 3)]);
     }
 
     #[test]
@@ -197,6 +197,6 @@ mod tests {
         let bi = Bresenham::new((2, 3), (2, 6));
         let res: Vec<_> = bi.collect();
 
-        assert_eq!(res, [(2, 3), (2, 4), (2, 5)]);
+        assert_eq!(res, [(2, 3), (2, 4), (2, 5), (2, 6)]);
     }
 }
