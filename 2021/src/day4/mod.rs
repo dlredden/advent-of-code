@@ -42,7 +42,7 @@ pub async fn run() {
 		// println!("Responses: {:?} {:?}", responses, winner);
 		if winner.len() == 1 {
 			println!("Winning Bingo: {}", winner[0]);
-			// break
+			break
 		}
 	}
 }
