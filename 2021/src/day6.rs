@@ -30,7 +30,6 @@ fn part2(data: &str) -> usize {
     }
 
     for day in 0..256 {
-        println!("Day {}: {}", day, sum_fish(&fish));
         finish_day2(&mut fish);
     }
 
