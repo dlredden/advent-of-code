@@ -124,17 +124,12 @@ fn decode_output(data: &str) -> usize {
 		}
 	}	
 	
-	println!("Patterns: {:?}", patterns);
-
 	let output: Vec<String> = data.split(" | ").collect::<Vec<&str>>()[1].split(" ").map(|s| s.chars().sorted().collect::<String>()).collect::<Vec<String>>();
 	let mut answer = "".to_string();
-	// format!("{:?}{:?}{:?}{:?}", patterns.get(&output[0]).unwrap(), patterns.get(&output[1]).unwrap(), patterns.get(&output[2]).unwrap(), patterns.get(&output[3]).unwrap());;
+	
 	for i in output.iter() {
 		answer = format!("{}{}", answer, patterns.get(i).unwrap());
 	}
-	println!("Output {:?}: ", output);
-	// println!("Answers {:?}{:?}{:?}{:?}", patterns.get(&output[0]).unwrap(), patterns.get(&output[1]).unwrap(), patterns.get(&output[1]).unwrap(), patterns.get(&output[1]).unwrap());
-	println!("Answer {}", answer.parse::<usize>().unwrap());
 	
 	answer.parse::<usize>().unwrap()
 }
@@ -159,8 +154,8 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 		assert_eq!(part1(INPUT), 26);
 	}
 
-	// #[test]
-	// fn p2() {
-	// 	assert_eq!(part1(INPUT), 26);
-	// }
+	#[test]
+	fn p2() {
+		assert_eq!(part2(INPUT), 61229);
+	}
 }
