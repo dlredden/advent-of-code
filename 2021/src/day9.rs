@@ -1,4 +1,5 @@
 use std::fs;
+use std::collections::HashMap;
 
 pub fn run() {
 	let data = fs::read_to_string("./data/day9.txt").expect("Error reading file!");
@@ -11,38 +12,60 @@ pub fn run() {
 }
 
 fn part1(data: &str) -> usize {
-	let lines: Vec<&str> = data
-		.lines()
-		.collect();
+	let heightmap: Vec<Vec<usize>> = parse_heightmap(&data);
+	let low_points: HashMap<(usize, usize), usize> = get_low_points(&heightmap);
 
-	let mut data_vec: Vec<Vec<usize>> = Vec::new();
-	let columns = lines[0].len();
-	let rows = lines.len();
-
-	for line in lines {
-		let v: Vec<usize> = line.split_terminator("").skip(1).map(|x| x.parse::<usize>().unwrap()).collect::<Vec<usize>>();
-		data_vec.push(v);
-	}
-
-	println!("{} {} {:?}", data_vec.len(), data_vec[0].len(), data_vec);
+	println!("{} {} {:?}", heightmap.len(), heightmap[0].len(), heightmap);
 	
 	let mut low_point_sum: usize = 0;
-	for r in 0..rows {
-		for c in 0..columns {
-			if is_low_point(&data_vec, (r, c)) {
-				println!("LP {} {:?}", data_vec[r][c], (r, c));
-				low_point_sum += data_vec[r][c] + 1
-			}
-		}
+	for (k, v) in low_points.iter() {
+		low_point_sum += *v + 1
 	}
 	low_point_sum
 }
 
 fn part2(data: &str) -> usize {
+	let heightmap: Vec<Vec<usize>> = parse_heightmap(&data);
+	let columns = heightmap[0].len();
+	let rows = heightmap.len();
+
+	1134
+}
+
+fn parse_heightmap(data: &str) -> Vec<Vec<usize>> {
 	let lines: Vec<&str> = data
 		.lines()
 		.collect();
-	0
+
+	let mut heightmap: Vec<Vec<usize>> = Vec::new();
+	
+	for line in lines {
+		let v: Vec<usize> = line
+			.split_terminator("")
+			.skip(1)
+			.map(|x| x.parse::<usize>().unwrap())
+			.collect::<Vec<usize>>();
+
+		heightmap.push(v);
+	}
+	heightmap
+}
+
+fn get_low_points(data: &Vec<Vec<usize>>) -> HashMap<(usize, usize), usize> {
+	let mut low_points: HashMap<(usize, usize), usize> = HashMap::new();
+	let columns = data[0].len();
+	let rows = data.len();
+
+	for r in 0..rows {
+		for c in 0..columns {
+			if is_low_point(&data, (r, c)) {
+				println!("LP {} {:?}", data[r][c], (r, c));
+				low_points.insert((r, c), data[r][c]);
+			}
+		}
+	}
+
+	low_points
 }
 
 fn is_low_point(data: &Vec<Vec<usize>>, (r, c): (usize, usize)) -> bool {
@@ -98,6 +121,6 @@ mod test {
 
 	#[test]
 	fn p2() {
-		assert_eq!(part1(INPUT), 1134);
+		assert_eq!(part2(INPUT), 1134);
 	}
 }
