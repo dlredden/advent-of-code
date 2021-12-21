@@ -1,5 +1,6 @@
 use std::fs;
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 pub fn run() {
 	let data = fs::read_to_string("./data/day9.txt").expect("Error reading file!");
@@ -15,7 +16,7 @@ fn part1(data: &str) -> usize {
 	let heightmap: Vec<Vec<usize>> = parse_heightmap(&data);
 	let low_points: HashMap<(usize, usize), usize> = get_low_points(&heightmap);
 
-	println!("{} {} {:?}", heightmap.len(), heightmap[0].len(), heightmap);
+	// println!("{} {} {:?}", heightmap.len(), heightmap[0].len(), heightmap);
 	
 	let mut low_point_sum: usize = 0;
 	for (k, v) in low_points.iter() {
@@ -26,10 +27,64 @@ fn part1(data: &str) -> usize {
 
 fn part2(data: &str) -> usize {
 	let heightmap: Vec<Vec<usize>> = parse_heightmap(&data);
+	let low_points: HashMap<(usize, usize), usize> = get_low_points(&heightmap);
+	let mut basin_size: Vec<usize> = Vec::new();
 	let columns = heightmap[0].len();
 	let rows = heightmap.len();
 
-	1134
+	for (k, v) in low_points.iter() {
+		basin_size.push(get_basin_size(&heightmap, k));
+	}
+
+	basin_size.sort();
+	basin_size.reverse();
+
+	basin_size[0] * basin_size[1] * basin_size[2]
+}
+
+fn get_basin_size(heightmap: &Vec<Vec<usize>>, point: &(usize, usize)) -> usize {
+	let mut filled: HashSet<(usize, usize)> = HashSet::new();
+	let rows = heightmap.len() - 1;
+	let columns = heightmap[0].len() - 1;
+	let mut queue: Vec<(usize, usize)> = Vec::new();
+
+	queue.push(*point);
+
+	while queue.len() > 0 {
+		let (row, col) = queue.pop().unwrap();
+		
+		// skip this node if it's a boundary
+		if heightmap[row][col] == 9 {	continue }
+
+		// Count it
+		filled.insert((row, col));
+
+		if row > 0 { // up node
+			if !filled.contains(&(row - 1, col)) {
+				queue.push((row - 1, col))
+			}
+		}
+
+		if row < rows { // down node
+			if !filled.contains(&(row + 1, col)) {
+				queue.push((row + 1, col))
+			}
+		}
+
+		if col > 0 { // left node
+			if !filled.contains(&(row, col - 1)) {
+				queue.push((row, col - 1))
+			}
+		}
+		
+		if col < columns { // right node
+			if !filled.contains(&(row, col + 1)) {
+				queue.push((row, col + 1))
+			}
+		}	
+	}
+
+	filled.len()
 }
 
 fn parse_heightmap(data: &str) -> Vec<Vec<usize>> {
@@ -59,7 +114,6 @@ fn get_low_points(data: &Vec<Vec<usize>>) -> HashMap<(usize, usize), usize> {
 	for r in 0..rows {
 		for c in 0..columns {
 			if is_low_point(&data, (r, c)) {
-				println!("LP {} {:?}", data[r][c], (r, c));
 				low_points.insert((r, c), data[r][c]);
 			}
 		}
