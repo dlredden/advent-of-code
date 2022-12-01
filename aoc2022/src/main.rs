@@ -1,3 +1,5 @@
+mod d1;
+
 fn main() {
-    println!("Hello, world!");
+    d1::run();
 }
