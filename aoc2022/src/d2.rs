@@ -6,8 +6,8 @@ pub fn run() {
 	let p1_results = part1(&data);
 	println!("My Rochambeau total score: {}", p1_results);
 
-	// let p2_results = part2(&data);
-	// println!("Calories carried by top 3 Elves: {}", p2_results);
+	let p2_results = part2(&data);
+	println!("My Rochambeau score with strategy: {}", p2_results);
 }
 
 fn part1(data: &str) -> isize {
@@ -16,15 +16,55 @@ fn part1(data: &str) -> isize {
 
 	for round in rounds {
 		let plays: Vec<&str> = round.split_whitespace().collect();
-		// println!("{}.{}.", plays[0], plays[1]);
+	
 		let round_score = calculate_scores(plays[0], plays[1]);
 		scores[0] += round_score[0];
 		scores[1] += round_score[1];
 	}
-	// println!("{:?}", scores);
+	
 	scores[1]
 }
 
+fn part2(data: &str) -> isize {
+	let rounds: Vec<&str> = data.lines().collect();
+	let mut scores = [0,0];
+
+	for round in rounds {
+		let plays: Vec<&str> = round.split_whitespace().collect();
+
+		let round_score = calculate_scores2(plays[0], plays[1]);
+		scores[0] += round_score[0];
+		scores[1] += round_score[1];
+	}
+
+	scores[1]
+}
+
+// Assuming X=Lose, Y=Draw, and Z=Win
+fn calculate_scores2(theirs: &str, outcome: &str) -> [isize; 2] {
+	let their_play: isize = match theirs {
+			"A" => 1, //Rock
+			"B" => 2,	//Paper
+			"C" => 3,	//Scissors
+			_ => 0
+	};
+	
+	if outcome == "X" {	// I must lose
+		if their_play == 1 {
+			return [their_play + 6, 3];
+		}
+		[their_play + 6, their_play - 1]
+	} else if outcome == "Y" {	// Draw
+		[their_play + 3, their_play + 3]
+	} else {	// I must win
+		if their_play == 3 {
+			return [their_play, 1 + 6];
+		}
+		[their_play, their_play + 1 + 6]
+	}
+}
+
+// Assuming X=Rock, Y=Paper, and Z=Scissors
 fn calculate_scores(theirs: &str, mine: &str) -> [isize; 2] {
 	let their_play: isize = match theirs {
 			"A" => 1,
@@ -40,12 +80,11 @@ fn calculate_scores(theirs: &str, mine: &str) -> [isize; 2] {
 	};
 	
 	let diff: isize = (their_play - my_play).try_into().unwrap();
-	// println!("{}.{}.{}", their_play, my_play, diff);
 	
 	match diff {
-		1 | -2 => [their_play + 6, my_play],
-		-1 | 2 => [their_play, my_play + 6],
-		_ => [their_play + 3, my_play + 3]
+		1 | -2 => [their_play + 6, my_play],	// They won
+		-1 | 2 => [their_play, my_play + 6],	// I won
+		_ => [their_play + 3, my_play + 3]		// Draw
 	}
 }
 
@@ -63,8 +102,8 @@ C Z
 		assert_eq!(part1(INPUT), 15);
 	}
 
-	// #[test]
-	// fn d2p2() {
-	// 	assert_eq!(part2(INPUT), 45000);
-	// }
+	#[test]
+	fn d2p2() {
+		assert_eq!(part2(INPUT), 12);
+	}
 }
