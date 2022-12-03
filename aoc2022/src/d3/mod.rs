@@ -1,3 +1,5 @@
+mod rucksack;
+
 pub fn run() {
 	let data = include_str!("input.txt");
 
@@ -7,10 +9,24 @@ pub fn run() {
 	// println!("My Rochambeau score with strategy: {}", p2_results);
 }
 
-fn part1(data: &str) -> isize {
-	let rucksack: Vec<&str> = data.lines().collect();
+fn part1(data: &str) -> usize {
+	let rucksacks: Vec<&str> = data.lines().collect();
+	let mut priority_sum: usize = 0;
 	
-	157
+	for rucksack in rucksacks {
+		let (half1, half2) = rucksack.split_at(rucksack.len()/2);
+		let common = rucksack::find_common_items(half1, half2);
+		// println!("{:?} {:?} {:?}", half1, half2, common);
+
+		for c in common {
+			let v = rucksack::PRIORITIES.find(c);
+			if !v.is_none() {
+				priority_sum += v.unwrap()
+			}
+		}
+	}
+
+	priority_sum
 }
 
 #[cfg(test)]
