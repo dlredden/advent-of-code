@@ -4,9 +4,7 @@ pub fn run() {
 	let data = include_str!("input.txt");
 
 	println!("Sum of items in both rucksacks: {}", part1(&data));
-
-	// let p2_results = part2(&data);
-	// println!("My Rochambeau score with strategy: {}", p2_results);
+	println!("Sum of rucksack badges: {}", part2(&data));
 }
 
 fn part1(data: &str) -> usize {
@@ -29,6 +27,27 @@ fn part1(data: &str) -> usize {
 	priority_sum
 }
 
+fn part2(data: &str) -> usize {
+	let mut rucksacks: Vec<&str> = data.lines().collect();
+	let mut priority_sum: usize = 0;
+
+	while rucksacks.len() > 0 {
+		let mut group: Vec<&str> = Vec::new();
+		while group.len() < 3 {
+			group.push(rucksacks.pop().unwrap());
+		}
+		let common = rucksack::find_badges(group);
+		for c in common {
+			let v = rucksack::PRIORITIES.find(c);
+			if !v.is_none() {
+				priority_sum += v.unwrap()
+			}
+		}
+	}
+	
+	priority_sum
+}
+
 #[cfg(test)]
 mod test {
 	use super::*;
@@ -39,8 +58,8 @@ mod test {
 		assert_eq!(part1(INPUT), 157);
 	}
 
-	// #[test]
-	// fn d2p2() {
-	// 	assert_eq!(part2(INPUT), 12);
-	// }
+	#[test]
+	fn d2p2() {
+		assert_eq!(part2(INPUT), 70);
+	}
 }
