@@ -72,12 +72,12 @@ mod test {
 ";
 
 	#[test]
-	fn p1() {
+	fn d1p1() {
 		assert_eq!(part1(INPUT), 24000);
 	}
 
 	#[test]
-	fn p2() {
+	fn d1p2() {
 		assert_eq!(part2(INPUT), 45000);
 	}
 }
