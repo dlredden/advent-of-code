@@ -59,7 +59,7 @@ mod test {
     }
 
     #[test]
-    fn d2p2() {
+    fn p2() {
         assert_eq!(part2(INPUT), 70);
     }
 }

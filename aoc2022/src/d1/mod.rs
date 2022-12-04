@@ -52,12 +52,12 @@ mod test {
     const INPUT: &str = include_str!("input.test.txt");
 
     #[test]
-    fn d1p1() {
+    fn p1() {
         assert_eq!(part1(INPUT), 24000);
     }
 
     #[test]
-    fn d1p2() {
+    fn p2() {
         assert_eq!(part2(INPUT), 45000);
     }
 }
