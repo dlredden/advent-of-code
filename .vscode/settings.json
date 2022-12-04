@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["heightmap"]
+  "cSpell.words": ["heightmap"],
+  "editor.formatOnSave": true
 }

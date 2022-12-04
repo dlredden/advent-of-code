@@ -1,7 +1,5 @@
-use std::fs;
-
 pub fn run() {
-    let data = fs::read_to_string("./data/d1.txt").expect("Error reading file!");
+    let data = include_str!("input.txt");
 
     println!("D1P1 - Calories carried by top Elf: {}", part1(&data));
     println!("D1P2 - Calories carried by top 3 Elves: {}", part2(&data));
@@ -51,22 +49,7 @@ fn part2(data: &str) -> usize {
 #[cfg(test)]
 mod test {
     use super::*;
-
-    const INPUT: &str = "1000
-2000
-3000
-
-4000
-
-5000
-6000
-
-7000
-8000
-9000
-
-10000
-";
+    const INPUT: &str = include_str!("input.test.txt");
 
     #[test]
     fn d1p1() {
