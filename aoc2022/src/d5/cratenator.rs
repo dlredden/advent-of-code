@@ -40,7 +40,7 @@ pub fn get_moves(data: &str) -> Vec<&str> {
     moves.find_iter(data).map(|m| m.as_str()).collect()
 }
 
-pub fn move_crates(instruction: &str, stacks: &mut HashMap<u32, VecDeque<&str>>) {
+pub fn move_crates_one_at_a_time(instruction: &str, stacks: &mut HashMap<u32, VecDeque<&str>>) {
     let move_regex = Regex::new(r"move\s(\d+)\sfrom\s(\d+)\sto\s(\d+)").unwrap();
     let captures = move_regex.captures(instruction).unwrap();
     let mut num_crates = captures.get(1).unwrap().as_str().parse::<u32>().unwrap();
@@ -51,5 +51,28 @@ pub fn move_crates(instruction: &str, stacks: &mut HashMap<u32, VecDeque<&str>>)
         let crate_to_move = stacks.get_mut(&from_stack).unwrap().pop_front().unwrap();
         stacks.get_mut(&to_stack).unwrap().push_front(crate_to_move);
         num_crates -= 1;
+    }
+}
+
+pub fn move_crates_multiple_at_a_time(
+    instruction: &str,
+    stacks: &mut HashMap<u32, VecDeque<&str>>,
+) {
+    let move_regex = Regex::new(r"move\s(\d+)\sfrom\s(\d+)\sto\s(\d+)").unwrap();
+    let captures = move_regex.captures(instruction).unwrap();
+    let num_crates = captures.get(1).unwrap().as_str().parse::<u32>().unwrap();
+    let from_stack = captures.get(2).unwrap().as_str().parse::<u32>().unwrap();
+    let to_stack = captures.get(3).unwrap().as_str().parse::<u32>().unwrap();
+
+    let mut crates_to_move = VecDeque::new();
+    for _ in 0..num_crates {
+        crates_to_move.push_front(stacks.get_mut(&from_stack).unwrap().pop_front().unwrap());
+    }
+
+    for _ in 0..num_crates {
+        stacks
+            .get_mut(&to_stack)
+            .unwrap()
+            .push_front(crates_to_move.pop_front().unwrap());
     }
 }
