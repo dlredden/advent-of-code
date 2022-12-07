@@ -1,11 +1,9 @@
-pub fn run() {
+pub fn run() -> (String, String) {
     const DATA: &str = include_str!("input.txt");
-
-    println!("D2P1 - My Rochambeau total score: {}", part1(DATA));
-    println!("D2P2 - My Rochambeau score with strategy: {}", part2(DATA));
+    (part1(DATA).to_string(), part2(DATA).to_string())
 }
 
-fn part1(data: &str) -> isize {
+fn part1(data: &str) -> i32 {
     let rounds: Vec<&str> = data.lines().collect();
     let mut scores = [0, 0];
 
@@ -17,10 +15,10 @@ fn part1(data: &str) -> isize {
         scores[1] += round_score[1];
     }
 
-    scores[1]
+    scores[1] as i32
 }
 
-fn part2(data: &str) -> isize {
+fn part2(data: &str) -> i32 {
     let rounds: Vec<&str> = data.lines().collect();
     let mut scores = [0, 0];
 
@@ -32,7 +30,7 @@ fn part2(data: &str) -> isize {
         scores[1] += round_score[1];
     }
 
-    scores[1]
+    scores[1] as i32
 }
 
 // Assuming X=Lose, Y=Draw, and Z=Win

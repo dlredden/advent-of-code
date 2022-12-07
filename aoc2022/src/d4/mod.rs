@@ -1,12 +1,10 @@
 use itertools::Itertools;
-pub fn run() {
+pub fn run() -> (String, String) {
     const DATA: &str = include_str!("input.txt");
-
-    println!("D4P1 - Fully contained pairs: {}", part1(DATA));
-    println!("D4P2 - All overlapping pairs: {}", part2(DATA));
+    (part1(DATA).to_string(), part2(DATA).to_string())
 }
 
-fn part1(data: &str) -> usize {
+fn part1(data: &str) -> i32 {
     let pairs: Vec<&str> = data.lines().collect();
     let mut fully_contained = 0;
 
@@ -33,7 +31,7 @@ fn part1(data: &str) -> usize {
     fully_contained
 }
 
-fn part2(data: &str) -> usize {
+fn part2(data: &str) -> i32 {
     let pairs: Vec<&str> = data.lines().collect();
     let mut fully_contained = 0;
 

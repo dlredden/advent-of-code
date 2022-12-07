@@ -1,13 +1,11 @@
-pub fn run() {
+pub fn run() -> (String, String) {
     const DATA: &str = include_str!("input.txt");
-
-    println!("D1P1 - Calories carried by top Elf: {}", part1(DATA));
-    println!("D1P2 - Calories carried by top 3 Elves: {}", part2(DATA));
+    (part1(DATA).to_string(), part2(DATA).to_string())
 }
 
-fn part1(data: &str) -> usize {
+fn part1(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
-    let mut elves: Vec<usize> = Vec::new();
+    let mut elves: Vec<i32> = Vec::new();
     let mut elf_count: usize = 0;
     elves.push(0);
 
@@ -18,16 +16,16 @@ fn part1(data: &str) -> usize {
             continue;
         }
 
-        elves[elf_count] += line.parse::<usize>().unwrap();
+        elves[elf_count] += line.parse::<i32>().unwrap();
     }
 
     elves.sort();
     elves[elf_count]
 }
 
-fn part2(data: &str) -> usize {
+fn part2(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
-    let mut elves: Vec<usize> = Vec::new();
+    let mut elves: Vec<i32> = Vec::new();
     let mut elf_count: usize = 0;
     elves.push(0);
 
@@ -38,7 +36,7 @@ fn part2(data: &str) -> usize {
             continue;
         }
 
-        elves[elf_count] += line.parse::<usize>().unwrap();
+        elves[elf_count] += line.parse::<i32>().unwrap();
     }
 
     elves.sort();

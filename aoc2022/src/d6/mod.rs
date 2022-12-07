@@ -1,14 +1,12 @@
 use itertools::Itertools;
 use std::collections::VecDeque;
 
-pub fn run() {
+pub fn run() -> (String, String) {
     const DATA: &str = include_str!("input.txt");
-
-    println!("D6P1 - First start of packet marker: {}", part1(DATA));
-    println!("D6P2 - First start of packet marker: {}", part2(DATA));
+    (part1(DATA).to_string(), part2(DATA).to_string())
 }
 
-fn part1(data: &str) -> u32 {
+fn part1(data: &str) -> i32 {
     let mut count = 0;
     let mut signal: VecDeque<char> = VecDeque::new();
 
@@ -31,7 +29,7 @@ fn part1(data: &str) -> u32 {
     count
 }
 
-fn part2(data: &str) -> u32 {
+fn part2(data: &str) -> i32 {
     let mut count = 0;
     let mut signal: VecDeque<char> = VecDeque::new();
 

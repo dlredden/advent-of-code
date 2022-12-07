@@ -1,15 +1,13 @@
 mod rucksack;
 
-pub fn run() {
+pub fn run() -> (String, String) {
     const DATA: &str = include_str!("input.txt");
-
-    println!("D3P1 - Sum of items in both rucksacks: {}", part1(DATA));
-    println!("D3P2 - Sum of rucksack badges: {}", part2(DATA));
+    (part1(DATA).to_string(), part2(DATA).to_string())
 }
 
-fn part1(data: &str) -> usize {
+fn part1(data: &str) -> i32 {
     let rucksacks: Vec<&str> = data.lines().collect();
-    let mut priority_sum: usize = 0;
+    let mut priority_sum: i32 = 0;
 
     for rucksack in rucksacks {
         let (half1, half2) = rucksack.split_at(rucksack.len() / 2);
@@ -19,7 +17,7 @@ fn part1(data: &str) -> usize {
         for c in common {
             let v = rucksack::PRIORITIES.find(c);
             if v.is_some() {
-                priority_sum += v.unwrap_or_default()
+                priority_sum += v.unwrap_or_default() as i32
             }
         }
     }
@@ -27,9 +25,9 @@ fn part1(data: &str) -> usize {
     priority_sum
 }
 
-fn part2(data: &str) -> usize {
+fn part2(data: &str) -> i32 {
     let mut rucksacks: Vec<&str> = data.lines().collect();
-    let mut priority_sum: usize = 0;
+    let mut priority_sum: i32 = 0;
 
     while !rucksacks.is_empty() {
         let mut group: Vec<&str> = Vec::new();
@@ -40,7 +38,7 @@ fn part2(data: &str) -> usize {
         for c in common {
             let v = rucksack::PRIORITIES.find(c);
             if v.is_some() {
-                priority_sum += v.unwrap_or_default()
+                priority_sum += v.unwrap_or_default() as i32
             }
         }
     }

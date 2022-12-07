@@ -1,11 +1,10 @@
 use itertools::Itertools;
 mod cratenator;
 
-pub fn run() {
+pub fn run() -> (String, String) {
     const DATA: &str = include_str!("input.txt");
 
-    println!("D5P1 - Crates on top of stacks: {}", part1(DATA));
-    println!("D5P2 - Crates on top of stacks: {}", part2(DATA));
+    (part1(DATA), part2(DATA))
 }
 
 fn part1(data: &str) -> String {
