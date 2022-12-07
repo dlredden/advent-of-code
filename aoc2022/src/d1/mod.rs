@@ -1,8 +1,8 @@
 pub fn run() {
-    let data = include_str!("input.txt");
+    const DATA: &str = include_str!("input.txt");
 
-    println!("D1P1 - Calories carried by top Elf: {}", part1(&data));
-    println!("D1P2 - Calories carried by top 3 Elves: {}", part2(&data));
+    println!("D1P1 - Calories carried by top Elf: {}", part1(DATA));
+    println!("D1P2 - Calories carried by top 3 Elves: {}", part2(DATA));
 }
 
 fn part1(data: &str) -> usize {
@@ -12,7 +12,7 @@ fn part1(data: &str) -> usize {
     elves.push(0);
 
     for line in lines {
-        if line.len() == 0 {
+        if line.is_empty() {
             elf_count += 1;
             elves.push(0);
             continue;
@@ -32,7 +32,7 @@ fn part2(data: &str) -> usize {
     elves.push(0);
 
     for line in lines {
-        if line.len() == 0 {
+        if line.is_empty() {
             elf_count += 1;
             elves.push(0);
             continue;

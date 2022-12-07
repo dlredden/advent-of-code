@@ -1,12 +1,11 @@
-use std::collections::VecDeque;
-
 use itertools::Itertools;
+use std::collections::VecDeque;
 
 pub fn run() {
     const DATA: &str = include_str!("input.txt");
 
-    println!("D6P1 - First start of packet marker: {}", part1(&DATA));
-    println!("D6P2 - First start of packet marker: {}", part2(&DATA));
+    println!("D6P1 - First start of packet marker: {}", part1(DATA));
+    println!("D6P2 - First start of packet marker: {}", part2(DATA));
 }
 
 fn part1(data: &str) -> u32 {

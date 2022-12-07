@@ -27,7 +27,7 @@ pub fn get_stacks(data: &str) -> HashMap<u32, VecDeque<&str>> {
                 .and_modify(|v| {
                     v.push_back(stack.as_str().trim());
                 })
-                .or_insert(VecDeque::from([stack.as_str().trim()]));
+                .or_insert_with(|| VecDeque::from([stack.as_str().trim()]));
         }
         current_stack += 1;
     }

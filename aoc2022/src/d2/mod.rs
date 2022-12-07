@@ -1,8 +1,8 @@
 pub fn run() {
-    let data = include_str!("input.txt");
+    const DATA: &str = include_str!("input.txt");
 
-    println!("D2P1 - My Rochambeau total score: {}", part1(&data));
-    println!("D2P2 - My Rochambeau score with strategy: {}", part2(&data));
+    println!("D2P1 - My Rochambeau total score: {}", part1(DATA));
+    println!("D2P2 - My Rochambeau score with strategy: {}", part2(DATA));
 }
 
 fn part1(data: &str) -> isize {
@@ -77,7 +77,7 @@ fn calculate_scores(theirs: &str, mine: &str) -> [isize; 2] {
         _ => 0,
     };
 
-    let diff: isize = (their_play - my_play).try_into().unwrap();
+    let diff: isize = their_play - my_play;
 
     match diff {
         1 | -2 => [their_play + 6, my_play], // They won

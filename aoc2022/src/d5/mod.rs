@@ -1,12 +1,11 @@
 use itertools::Itertools;
-
 mod cratenator;
 
 pub fn run() {
     const DATA: &str = include_str!("input.txt");
 
-    println!("D5P1 - Crates on top of stacks: {}", part1(&DATA));
-    println!("D5P2 - Crates on top of stacks: {}", part2(&DATA));
+    println!("D5P1 - Crates on top of stacks: {}", part1(DATA));
+    println!("D5P2 - Crates on top of stacks: {}", part2(DATA));
 }
 
 fn part1(data: &str) -> String {
@@ -19,7 +18,7 @@ fn part1(data: &str) -> String {
 
     let mut top_crates = "".to_string();
     for key in stacks.keys().sorted() {
-        if stacks.get(key).unwrap().len() > 0 {
+        if !stacks.get(key).unwrap().is_empty() {
             let x = stacks
                 .get(key)
                 .unwrap()
@@ -45,7 +44,7 @@ fn part2(data: &str) -> String {
 
     let mut top_crates = "".to_string();
     for key in stacks.keys().sorted() {
-        if stacks.get(key).unwrap().len() > 0 {
+        if !stacks.get(key).unwrap().is_empty() {
             let x = stacks
                 .get(key)
                 .unwrap()
