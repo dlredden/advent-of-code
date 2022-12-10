@@ -10,13 +10,14 @@ mod d4;
 mod d5;
 mod d6;
 mod d7;
+mod d8;
 
 fn main() {
     let mut handles: HashMap<i32, JoinHandle<(String, String)>> = HashMap::new();
     let mut results: HashMap<i32, (String, String)> = HashMap::new();
 
     // Spawn threads for each day
-    for i in 1..8 {
+    for i in 1..9 {
         let handle = thread::spawn(move || match i {
             1 => d1::run(),
             2 => d2::run(),
@@ -25,6 +26,7 @@ fn main() {
             5 => d5::run(),
             6 => d6::run(),
             7 => d7::run(),
+            8 => d8::run(),
             _ => panic!("Invalid day"),
         });
         handles.insert(i, handle);
