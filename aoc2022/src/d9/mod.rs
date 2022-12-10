@@ -76,7 +76,7 @@ fn part1(data: &str) -> i32 {
                 _ => panic!("Invalid direction"),
             }
 
-            // Move tail
+            // Move tail and store the postion in the history
             tail_position = move_tail(head_position, tail_position);
             let tail_pos = position_history.entry(tail_position).or_insert(0);
             *tail_pos += 1;
@@ -88,22 +88,63 @@ fn part1(data: &str) -> i32 {
 
 fn part2(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
-    let _moves = parse_input(&lines);
-    0
+    let moves = parse_input(&lines);
+    let mut position_history: HashMap<(i32, i32), i32> = HashMap::new();
+    let mut knots = vec![
+        (0, 0),
+        (0, 0),
+        (0, 0),
+        (0, 0),
+        (0, 0),
+        (0, 0),
+        (0, 0),
+        (0, 0),
+        (0, 0),
+        (0, 0),
+    ];
+
+    // Set initial position
+    position_history.entry(knots[9]).or_insert(1);
+
+    // Iterate through moves
+    for (direction, distance) in moves {
+        for _i in 0..distance {
+            // Move head
+            match direction.as_str() {
+                "U" => knots[0].1 += 1,
+                "D" => knots[0].1 -= 1,
+                "L" => knots[0].0 -= 1,
+                "R" => knots[0].0 += 1,
+                _ => panic!("Invalid direction"),
+            }
+
+            // Loop through the knots and move them
+            for i in 1..10 {
+                knots[i] = move_tail(knots[i - 1], knots[i]);
+            }
+
+            // Store the tail postion in the history
+            let tail_pos = position_history.entry(knots[9]).or_insert(0);
+            *tail_pos += 1;
+            // println!("Head: {:?}, Tail: {:?}", head_position, tail_position)
+        }
+    }
+    position_history.len() as i32
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    const INPUT: &str = include_str!("input.test.txt");
+    const INPUT1: &str = include_str!("input1.test.txt");
+    const INPUT2: &str = include_str!("input2.test.txt");
 
     #[test]
     fn p1() {
-        assert_eq!(part1(INPUT), 13);
+        assert_eq!(part1(INPUT1), 13);
     }
 
     #[test]
     fn p2() {
-        assert_eq!(part2(INPUT), 0);
+        assert_eq!(part2(INPUT2), 36);
     }
 }
