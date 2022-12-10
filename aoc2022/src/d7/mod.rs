@@ -6,8 +6,7 @@ pub fn run() -> (String, String) {
     (part1(DATA).to_string(), part2(DATA).to_string())
 }
 
-fn part1(data: &str) -> i32 {
-    let lines: Vec<&str> = data.lines().collect();
+fn parse_input(lines: &Vec<&str>) -> HashMap<String, i32> {
     let mut directories: HashMap<String, i32> = HashMap::new();
     let mut current_dir: String = "root".to_string();
     let re = Regex::new(r"/[a-zA-Z]*$").unwrap();
@@ -41,6 +40,12 @@ fn part1(data: &str) -> i32 {
             }
         }
     }
+    directories
+}
+
+fn part1(data: &str) -> i32 {
+    let lines: Vec<&str> = data.lines().collect();
+    let directories = parse_input(&lines);
 
     let sum = directories
         .iter()
@@ -53,39 +58,7 @@ fn part1(data: &str) -> i32 {
 
 fn part2(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
-    let mut directories: HashMap<String, i32> = HashMap::new();
-    let mut current_dir: String = "root".to_string();
-    let re = Regex::new(r"/[a-zA-Z]*$").unwrap();
-
-    for line in lines {
-        let command = line.split_whitespace().collect::<Vec<&str>>();
-        if command[0] == "$" {
-            if command[1] == "ls" {
-                continue;
-            }
-            if command[1] == "cd" {
-                if command[2] == "/" {
-                    directories.insert(current_dir.to_string(), 0);
-                } else if command[2] == ".." {
-                    current_dir = re.replace(&current_dir, "").to_string();
-                } else {
-                    current_dir = current_dir + "/" + command[2];
-                }
-            }
-        } else if command[0] == "dir" {
-            directories.insert(current_dir.to_string() + "/" + command[1], 0);
-        } else {
-            let size = command[0].parse::<i32>().unwrap();
-            let dir = directories.get_mut(&current_dir).unwrap();
-            *dir += size;
-            let mut tmp_dir = current_dir.to_string();
-            while tmp_dir != "root" {
-                tmp_dir = re.replace(&tmp_dir, "").to_string();
-                let tmp_dir = directories.get_mut(&tmp_dir).unwrap();
-                *tmp_dir += size;
-            }
-        }
-    }
+    let directories = parse_input(&lines);
 
     const DRIVE_SIZE: i32 = 70000000;
     const REQUIRED_FREE: i32 = 30000000;
