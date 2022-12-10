@@ -1,5 +1,5 @@
-mod file_system;
-use file_system::Dir;
+use regex::Regex;
+use std::collections::HashMap;
 
 pub fn run() -> (String, String) {
     const DATA: &str = include_str!("input.txt");
@@ -8,32 +8,47 @@ pub fn run() -> (String, String) {
 
 fn part1(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
-    let mut dir: Dir = Dir::new("/".to_string(), None);
-    let mut current_dir = &mut dir;
+    let mut directories: HashMap<String, i32> = HashMap::new();
+    let mut current_dir: String = "root".to_string();
+    let re = Regex::new(r"/[a-zA-Z]*$").unwrap();
 
     for line in lines {
         let command = line.split_whitespace().collect::<Vec<&str>>();
-        // println!("Command {:?}", command);
         if command[0] == "$" {
+            if command[1] == "ls" {
+                continue;
+            }
             if command[1] == "cd" {
-                // current_dir.ls();
-                current_dir = dir.change_dir(command[2].to_string());
+                if command[2] == "/" {
+                    directories.insert(current_dir.to_string(), 0);
+                } else if command[2] == ".." {
+                    current_dir = re.replace(&current_dir, "").to_string();
+                } else {
+                    current_dir = current_dir + "/" + command[2];
+                }
             }
         } else if command[0] == "dir" {
-            // println!("Added dir {} to {}", command[1], current_dir.name);
-            current_dir.add_dir(command[1].to_string());
+            directories.insert(current_dir.to_string() + "/" + command[1], 0);
         } else {
             let size = command[0].parse::<i32>().unwrap();
-            current_dir.add_file(command[1].to_string(), size);
-            // println!("Added file {} with size {}", command[1], size)
+            let dir = directories.get_mut(&current_dir).unwrap();
+            *dir += size;
+            let mut tmp_dir = current_dir.to_string();
+            while tmp_dir != "root" {
+                tmp_dir = re.replace(&tmp_dir, "").to_string();
+                let tmp_dir = directories.get_mut(&tmp_dir).unwrap();
+                *tmp_dir += size;
+            }
         }
     }
-    let sizes = dir.get_sizes();
-    println!("Sizes: {:?}", sizes);
 
-    let ret: i32 = sizes.iter().filter(|&x| *x < 1000000).sum();
-    dir.ls();
-    ret
+    let sum = directories
+        .iter()
+        .filter(|(_d, s)| s < &&100000)
+        .map(|(_d, s)| s)
+        .sum();
+
+    sum
 }
 
 fn part2(data: &str) -> i32 {
