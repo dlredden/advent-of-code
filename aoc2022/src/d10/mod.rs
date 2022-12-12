@@ -1,6 +1,6 @@
 pub fn run() -> (String, String) {
     const DATA: &str = include_str!("input.txt");
-    (part1(DATA).to_string(), part2(DATA).to_string())
+    (part1(DATA).to_string(), part2(DATA))
 }
 
 fn parse_input(lines: &Vec<&str>) -> Vec<(String, Option<i32>)> {
@@ -56,7 +56,7 @@ fn part1(data: &str) -> i32 {
 }
 
 // function to draw the crt screen
-fn draw_crt(cycle: i32, x: i32, crt_output: &mut Vec<Vec<char>>) {
+fn draw_crt(cycle: i32, x: i32, crt_output: &mut [Vec<char>]) {
     let row: usize = ((cycle - 1) / 40) as usize;
 
     let column: usize = if cycle > 40 {
@@ -125,7 +125,8 @@ mod test {
     fn p2() {
         assert_eq!(
             part2(INPUT),
-            "##..##..##..##..##..##..##..##..##..##..
+            "
+##..##..##..##..##..##..##..##..##..##..
 ###...###...###...###...###...###...###.
 ####....####....####....####....####....
 #####.....#####.....#####.....#####.....
