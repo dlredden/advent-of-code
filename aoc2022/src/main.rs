@@ -5,6 +5,7 @@ use std::{
 
 mod d1;
 mod d10;
+mod d11;
 mod d2;
 mod d3;
 mod d4;
@@ -19,7 +20,7 @@ fn main() {
     let mut results: HashMap<i32, (String, String)> = HashMap::new();
 
     // Spawn threads for each day
-    for i in 1..11 {
+    for i in 1..12 {
         let handle = thread::spawn(move || match i {
             1 => d1::run(),
             2 => d2::run(),
@@ -31,6 +32,7 @@ fn main() {
             8 => d8::run(),
             9 => d9::run(),
             10 => d10::run(),
+            11 => d11::run(),
             _ => panic!("Invalid day"),
         });
         handles.insert(i, handle);
