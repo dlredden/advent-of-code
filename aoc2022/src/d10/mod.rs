@@ -55,10 +55,60 @@ fn part1(data: &str) -> i32 {
     signal_strengths.iter().sum()
 }
 
-fn part2(data: &str) -> i32 {
+// function to draw the crt screen
+fn draw_crt(cycle: i32, x: i32, crt_output: &mut Vec<Vec<char>>) {
+    let row: usize = ((cycle - 1) / 40) as usize;
+
+    let column: usize = if cycle > 40 {
+        (cycle - 1) % 40
+    } else {
+        cycle - 1
+    } as usize;
+
+    // println!(
+    //     "cycle: {}, x: {}, row: {}, column: {}",
+    //     cycle, x, row, column
+    // );
+
+    if column == (x - 1) as usize || column == (x + 1) as usize || column == x as usize {
+        crt_output[row][column] = '#';
+    } else {
+        crt_output[row][column] = '.';
+    }
+}
+
+fn part2(data: &str) -> String {
     let lines: Vec<&str> = data.lines().collect();
-    let _signals = parse_input(&lines);
-    0
+    let signals = parse_input(&lines);
+    let mut cycle = 0;
+    let mut x = 1;
+    let mut crt_output: Vec<Vec<char>> = vec![vec!['.'; 40]; 6];
+
+    // loop through signals adding 1 cycle for noops and 2 cycles for addx adding the value to x on the 2nd cycle
+    for signal in signals {
+        match signal.0.as_str() {
+            "noop" => {
+                cycle += 1;
+                draw_crt(cycle, x, &mut crt_output);
+            }
+            "addx" => {
+                cycle += 1;
+                draw_crt(cycle, x, &mut crt_output);
+                cycle += 1;
+                draw_crt(cycle, x, &mut crt_output);
+                x += signal.1.unwrap();
+            }
+            _ => panic!("Invalid signal"),
+        }
+    }
+
+    let ret = crt_output
+        .iter()
+        .map(|line| line.iter().collect::<String>())
+        .collect::<Vec<String>>()
+        .join("\n");
+    // println!("{} ret", ret);
+    "\n".to_string() + ret.as_str()
 }
 
 #[cfg(test)]
@@ -73,6 +123,14 @@ mod test {
 
     #[test]
     fn p2() {
-        assert_eq!(part2(INPUT), 0);
+        assert_eq!(
+            part2(INPUT),
+            "##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######....."
+        );
     }
 }
