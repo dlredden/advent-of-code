@@ -7,33 +7,42 @@ pub fn run() -> (String, String) {
 
 struct Monkey {
     inventory: VecDeque<i32>,
-    worry: fn(&mut i32) -> &mut i32,
-    test: fn(i32) -> bool,
-    throw_to: HashMap<bool, i32>,
+    worry_factor: Option<i32>,
+    worry: fn(&mut i32, Option<i32>),
+    test_factor: i32,
+    test: fn(i32, i32) -> bool,
+    throw_to: HashMap<bool, usize>,
     inspection_count: i32,
 }
 
 impl Monkey {
     fn new(
         inventory: VecDeque<i32>,
-        worry: fn(&mut i32) -> &mut i32,
-        test: fn(i32) -> bool,
-        throw_to: HashMap<bool, i32>,
+        worry_factor: Option<i32>,
+        worry: fn(&mut i32, Option<i32>),
+        test_factor: i32,
+        throw_to: HashMap<bool, usize>,
     ) -> Monkey {
         Monkey {
             inventory,
+            worry_factor,
             worry,
-            test,
+            test_factor,
+            test: test_worry,
             throw_to,
             inspection_count: 0,
         }
     }
 
+    pub fn inventory_len(&self) -> usize {
+        self.inventory.len()
+    }
+
     pub fn inspect(&mut self, x: &mut i32) -> bool {
         self.inspection_count += 1;
-        (self.worry)(x);
-        *x /= 3;
-        (self.test)(*x)
+        (self.worry)(x, self.worry_factor);
+        *x /= 3; // relief
+        (self.test)(*x, self.test_factor)
     }
 
     pub fn add_to_inventory(&mut self, x: i32) {
@@ -45,56 +54,102 @@ impl Monkey {
     }
 }
 
-fn parse_input(lines: &Vec<&str>) -> Vec<(String, Option<i32>)> {
-    let mut signals: Vec<(String, Option<i32>)> = Vec::new();
+fn worry_multiply(x: &mut i32, multiplier: Option<i32>) {
+    if let Some(value) = multiplier {
+        *x *= value;
+    } else {
+        *x = x.pow(2)
+    }
+}
 
-    for line in lines {
-        let this_signal = line.split_whitespace().collect::<Vec<&str>>();
-        let command = this_signal[0].to_string();
+fn worry_add(x: &mut i32, adder: Option<i32>) {
+    *x += adder.unwrap()
+}
 
-        if this_signal.len() == 1 {
-            signals.push((command, None));
+fn test_worry(x: i32, divisor: i32) -> bool {
+    x % divisor == 0
+}
+
+fn parse_input(lines: &[&str]) -> Vec<Monkey> {
+    let mut monkeys: Vec<Monkey> = Vec::new();
+    let filtered: Vec<&&str> = lines.iter().filter(|x| !x.is_empty()).collect();
+    let monkey = filtered.chunks_exact(6);
+
+    for line in monkey {
+        let inventory = line[1].split(':').collect::<Vec<&str>>()[1]
+            .split(',')
+            .collect::<Vec<&str>>()
+            .iter()
+            .map(|x| x.trim().parse::<i32>().unwrap())
+            .collect::<VecDeque<i32>>();
+
+        let op = line[2].split_whitespace().collect::<Vec<&str>>();
+        let worry = match op[4] {
+            "*" => worry_multiply,
+            "+" => worry_add,
+            _ => panic!("Invalid worry"),
+        };
+        let worry_factor: Option<i32> = if op[5] == "old" {
+            None
         } else {
-            let value = this_signal[1].parse::<i32>().unwrap();
-            signals.push((command, Some(value)));
-        }
+            Some(op[5].parse::<i32>().unwrap())
+        };
+        let test_factor = line[3].split_whitespace().collect::<Vec<&str>>()[3]
+            .trim()
+            .parse::<i32>()
+            .unwrap();
+        let mut throw_to: HashMap<bool, usize> = HashMap::new();
+        throw_to.insert(
+            true,
+            line[4].split_whitespace().collect::<Vec<&str>>()[5]
+                .parse::<usize>()
+                .unwrap(),
+        );
+        throw_to.insert(
+            false,
+            line[5].split_whitespace().collect::<Vec<&str>>()[5]
+                .parse::<usize>()
+                .unwrap(),
+        );
+
+        monkeys.push(Monkey::new(
+            inventory,
+            worry_factor,
+            worry,
+            test_factor,
+            throw_to,
+        ));
     }
 
-    signals
+    monkeys
 }
 
 fn part1(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
-    let signals = parse_input(&lines);
+    let mut monkeys = parse_input(&lines);
+    let num_monkeys = monkeys.len();
 
-    10605
-}
+    for _i in 0..20 {
+        for m in 0..num_monkeys {
+            println!("i: {}, m: {}", _i, m);
+            while monkeys[m].inventory_len() > 0 {
+                let mut x = monkeys[m].get_from_inventory();
 
-// function to draw the crt screen
-fn draw_crt(cycle: i32, x: i32, crt_output: &mut [Vec<char>]) {
-    let row: usize = ((cycle - 1) / 40) as usize;
-
-    let column: usize = if cycle > 40 {
-        (cycle - 1) % 40
-    } else {
-        cycle - 1
-    } as usize;
-
-    // println!(
-    //     "cycle: {}, x: {}, row: {}, column: {}",
-    //     cycle, x, row, column
-    // );
-
-    if column == (x - 1) as usize || column == (x + 1) as usize || column == x as usize {
-        crt_output[row][column] = '#';
-    } else {
-        crt_output[row][column] = '.';
+                let result = monkeys[m].inspect(&mut x);
+                let throw_to = monkeys[m].throw_to[&result];
+                monkeys[throw_to].add_to_inventory(x);
+            }
+        }
     }
+
+    monkeys.sort_by(|a, b| b.inspection_count.cmp(&a.inspection_count));
+
+    monkeys[0].inspection_count * monkeys[1].inspection_count
 }
 
 fn part2(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
-    let signals = parse_input(&lines);
+    let _monkeys = parse_input(&lines);
     0
 }
 
