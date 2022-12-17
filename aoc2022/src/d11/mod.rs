@@ -159,8 +159,8 @@ fn part2(data: &str) -> i64 {
     let num_monkeys = monkeys.len();
     let mut modifier: i64 = 1;
 
-    for i in 0..num_monkeys {
-        modifier *= monkeys[i].test_factor;
+    for monkey in monkeys.iter().take(num_monkeys) {
+        modifier *= monkey.test_factor;
     }
 
     for _i in 0..10000 {
