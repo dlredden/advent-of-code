@@ -5,40 +5,28 @@ pub fn run() -> (String, String) {
     (part1(DATA).to_string(), part2(DATA).to_string())
 }
 
-fn parse_input(lines: &Vec<&str>) -> Vec<Vec<i32>> {
-    let mut board: Vec<Vec<i32>> = Vec::new();
-    let char_map = get_char_map();
+fn parse_input(lines: &Vec<&str>) -> Vec<Vec<char>> {
+    let mut board: Vec<Vec<char>> = Vec::new();
 
     for line in lines {
-        board.push(line.chars().map(|c| char_map[&c]).collect());
+        board.push(line.chars().collect());
     }
 
     board
 }
 
-fn get_char_map() -> HashMap<char, i32> {
-    let mut map: HashMap<char, i32> = HashMap::new();
-
-    for i in 1..27 {
-        map.insert(((i + 96) as u8) as char, i);
-    }
-    map.insert('S', 0);
-    map.insert('E', 27);
-
-    map
-}
-
 // function to find the position with value x
-fn get_pos(board: &[Vec<i32>], x: i32) -> (usize, usize) {
+fn get_pos(board: &[Vec<char>], x: char) -> Vec<(usize, usize)> {
+    let mut pos: Vec<(usize, usize)> = Vec::new();
     for (i, row) in board.iter().enumerate() {
         for (j, col) in row.iter().enumerate() {
             if *col == x {
-                return (i, j);
+                pos.push((i, j));
             }
         }
     }
 
-    (0, 0)
+    pos
 }
 
 struct Position {
@@ -46,134 +34,115 @@ struct Position {
     steps: usize,
 }
 
-// Function that uses Dijkstra's algorithm to find the shortest path to position 27
-fn find_shortest_path(board: &[Vec<i32>]) -> usize {
+// Function that uses Dijkstra's algorithm to find the shortest path to position E
+fn map_paths(board: &[Vec<char>], starting_pos: Vec<(usize, usize)>) -> Position {
+    let mut visited: HashMap<(usize, usize), usize> = HashMap::new();
     let mut queue: Vec<Position> = Vec::new();
-    let mut visited: Vec<Position> = Vec::new();
+    let mut steps = 0;
 
-    let start_pos = get_pos(board, 0);
-    queue.push(Position {
-        steps: 0,
-        pos: start_pos,
-    });
+    for pos in starting_pos {
+        queue.push(Position { pos, steps });
+    }
 
     while !queue.is_empty() {
-        let current_pos = queue.remove(0);
-        visited.push(current_pos);
+        let pos = queue.remove(0);
+        let (row, col) = pos.pos;
+        steps = pos.steps;
 
-        let next_pos = find_nearest_position(
-            board,
-            current_pos,
-            board[current_pos.pos.0][current_pos.pos.1] + 1,
-        );
+        // Check if we've reached the end
+        if board[row][col] == 'E' {
+            return pos;
+        }
 
-        if next_pos.pos != current_pos.pos {
-            queue.push(next_pos);
+        // Check if we've already visited this position
+        if visited.contains_key(&(row, col)) {
+            if visited[&(row, col)] <= steps {
+                continue;
+            } else {
+                visited.remove(&(row, col));
+            }
+        }
+
+        // Add the position to the visited list
+        visited.insert((row, col), steps);
+
+        // Add the adjacent positions to the queue
+        if row > 0 && is_valid_move(board, (row, col), (row - 1, col)) {
+            queue.push(Position {
+                pos: (row - 1, col),
+                steps: steps + 1,
+            });
+        }
+
+        if row < board.len() - 1 && is_valid_move(board, (row, col), (row + 1, col)) {
+            queue.push(Position {
+                pos: (row + 1, col),
+                steps: steps + 1,
+            });
+        }
+
+        if col > 0 && is_valid_move(board, (row, col), (row, col - 1)) {
+            queue.push(Position {
+                pos: (row, col - 1),
+                steps: steps + 1,
+            });
+        }
+
+        if col < board[0].len() - 1 && is_valid_move(board, (row, col), (row, col + 1)) {
+            queue.push(Position {
+                pos: (row, col + 1),
+                steps: steps + 1,
+            });
         }
     }
 
-    visited.last().unwrap().steps
+    Position { pos: (0, 0), steps }
 }
 
-fn find_nearest_position(
-    board: &[Vec<i32>],
-    current_pos: Position,
-    value_to_find: i32,
-) -> Position {
-    // We have found the end
-    if value_to_find > 27 {
-        return current_pos;
+fn get_value(c: char) -> u32 {
+    match c {
+        'S' => 0,
+        'E' => 27,
+        _ => c as u32 - 96,
+    }
+}
+
+fn is_valid_move(board: &[Vec<char>], from_pos: (usize, usize), to_pos: (usize, usize)) -> bool {
+    // Make sure move is less than or equal to 1 more than the current position
+    if get_value(board[to_pos.0][to_pos.1]) <= get_value(board[from_pos.0][from_pos.1]) + 1 {
+        return true;
     }
 
-    let mut positions: Vec<Position> = Vec::new();
-
-    // check left for value + 1
-    if current_pos.pos.1 > 0
-        && (board[current_pos.pos.0][current_pos.pos.1 - 1] == value_to_find
-            || board[current_pos.pos.0][current_pos.pos.1 - 1] == value_to_find + 1)
-    {
-        positions.push(Position {
-            steps: 1,
-            pos: (current_pos.pos.0, current_pos.pos.1 - 1),
-        });
-    }
-
-    // check right for value + 1
-    if current_pos.pos.1 < board.len() - 1
-        && board[current_pos.pos.0][current_pos.pos.1 + 1] == value_to_find
-    {
-        positions.push(Position {
-            steps: 1,
-            pos: (current_pos.pos.0, current_pos.pos.1 + 1),
-        });
-    }
-
-    // check up for value + 1
-    if current_pos.pos.0 > 0 && board[current_pos.pos.0 - 1][current_pos.pos.1] == value_to_find {
-        positions.push(Position {
-            steps: 1,
-            pos: (current_pos.pos.0 - 1, current_pos.pos.1),
-        });
-    }
-
-    // check down for value + 1
-    if current_pos.pos.0 < board.len() - 1
-        && board[current_pos.pos.0 + 1][current_pos.pos.1] == value_to_find
-    {
-        positions.push(Position {
-            steps: 1,
-            pos: (current_pos.pos.0 + 1, current_pos.pos.1),
-        });
-    }
-
-    // find the positions with the least steps
-    let mut next_pos: Position;
-    next_pos = positions.pop().unwrap();
-    for pos in positions {
-        if pos.steps < next_pos.steps {
-            next_pos = pos;
-        }
-    }
-
-    // Add the current_pos steps to the next_position steps
-    next_pos.steps += current_pos.steps;
-
-    find_nearest_position(board, next_pos, value_to_find + 1)
+    false
 }
 
 fn part1(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
     let board = parse_input(&lines);
-    let starting_pos = get_pos(&board, 0);
-    let destination = get_pos(&board, 27);
+    let visited = map_paths(&board, get_pos(&board, 'S'));
 
-    let pos = find_nearest_position(
-        &board,
-        Position {
-            pos: starting_pos,
-            steps: 0,
-        },
-        1,
-    );
-
-    // print the board
-    for row in board {
-        for col in row {
-            print!("{: >2} ", col);
-        }
-        println!();
-    }
-    println!("{:?}", starting_pos);
-    println!("{:?}", destination);
-    println!("{:?} {}", pos.pos, pos.steps);
-    31
+    visited.steps as i32
 }
 
 fn part2(data: &str) -> i32 {
-    let _lines: Vec<&str> = data.lines().collect();
-    // let _map = parse_input(&lines);
+    let lines: Vec<&str> = data.lines().collect();
+    let board = parse_input(&lines);
+    let mut starting_pos = get_pos(&board, 'S');
+    for pos in get_pos(&board, 'a') {
+        starting_pos.push(pos);
+    }
+    let visited = map_paths(&board, starting_pos);
 
-    0
+    // print the board
+    // for row in board {
+    //     for col in row {
+    //         print!("{} ", col);
+    //     }
+    //     println!();
+    // }
+    // println!("{:?}", starting_pos);
+    // println!("{:?} {}", visited.pos, visited.steps);
+    visited.steps as i32
 }
 
 #[cfg(test)]
@@ -188,6 +157,6 @@ mod test {
 
     #[test]
     fn p2() {
-        assert_eq!(part2(INPUT), 0);
+        assert_eq!(part2(INPUT), 29);
     }
 }
