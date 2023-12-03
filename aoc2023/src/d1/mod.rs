@@ -7,7 +7,7 @@ fn get_number(s: &str) -> i32 {
     if s.parse::<i32>().is_ok() {
         return s.parse::<i32>().unwrap();
     }
-    
+
     match s {
         "one" => 1,
         "two" => 2,
@@ -29,7 +29,7 @@ fn part1(data: &str) -> i32 {
 
     for line in lines {
         let matches: Vec<&str> = pattern.find_iter(line).map(|mat| mat.as_str()).collect();
-        
+
         let mut first: i32 = 0;
         let mut last: i32 = 0;
 
@@ -44,7 +44,7 @@ fn part1(data: &str) -> i32 {
         let mut s_num = first.to_string().to_owned();
         s_num.push_str(&last.to_string());
         let num = s_num.parse::<i32>().unwrap();
-        
+
         calibration_values.push(num);
     }
 
@@ -64,12 +64,13 @@ fn part2(data: &str) -> i32 {
         for i in 0..line.len() {
             let end = if i + 5 > line.len() {
                 line.len()
-            }
-            else { i + 5 };
-            
+            } else {
+                i + 5
+            };
+
             let s = &line[i..end];
             let matches: Vec<&str> = pattern.find_iter(s).map(|mat| mat.as_str()).collect();
-            
+
             for m in matches {
                 let num = get_number(m);
                 if first == 0 {
@@ -78,11 +79,11 @@ fn part2(data: &str) -> i32 {
                 last = num;
             }
         }
-       
+
         let mut s_num = first.to_string().to_owned();
         s_num.push_str(&last.to_string());
         let num = s_num.parse::<i32>().unwrap();
-        
+
         calibration_values.push(num);
     }
 
