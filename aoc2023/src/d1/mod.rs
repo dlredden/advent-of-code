@@ -60,17 +60,16 @@ fn part2(data: &str) -> i32 {
         let mut first = 0;
         let mut last = 0;
 
-        // println!("{}", line);
         // loop through line 5 characters at a time
         for i in 0..line.len() {
             let end = if i + 5 > line.len() {
                 line.len()
             }
             else { i + 5 };
+            
             let s = &line[i..end];
-            // println!("{}", s);
             let matches: Vec<&str> = pattern.find_iter(s).map(|mat| mat.as_str()).collect();
-            // println!("{:?}", matches);
+            
             for m in matches {
                 let num = get_number(m);
                 if first == 0 {
@@ -87,7 +86,6 @@ fn part2(data: &str) -> i32 {
         calibration_values.push(num);
     }
 
-    println!("{:?}", calibration_values);
     calibration_values.iter().sum()
 }
 
