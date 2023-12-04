@@ -29,8 +29,27 @@ fn part1(data: &str) -> i32 {
     points
 }
 
-fn part2(_data: &str) -> i32 {
-    0
+fn part2(data: &str) -> i32 {
+    let cards: Vec<&str> = data.lines().collect();
+    let mut card_counts: Vec<i32> = vec![1; cards.len()];
+
+    for c in 0..cards.len() - 1 {
+        // Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
+        let split_card = cards[c].split(" | ").collect::<Vec<&str>>();
+        let winning_numbers = split_card[0].split(':').collect::<Vec<&str>>()[1]
+            .split_whitespace()
+            .collect::<Vec<&str>>();
+        let my_numbers = split_card[1].split_whitespace().collect::<Vec<&str>>();
+        let matches = winning_numbers
+            .iter()
+            .filter(|&n| my_numbers.contains(n))
+            .count();
+        for m in 1..matches + 1 {
+            card_counts[c + m] += card_counts[c];
+        }
+    }
+
+    card_counts.iter().sum()
 }
 
 #[cfg(test)]
@@ -45,6 +64,6 @@ mod test {
 
     #[test]
     fn p2() {
-        assert_eq!(part2(INPUT), 0);
+        assert_eq!(part2(INPUT), 30);
     }
 }
