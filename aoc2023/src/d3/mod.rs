@@ -72,15 +72,12 @@ fn is_adjacent(grid: &Vec<Vec<char>>, x: usize, y: usize) -> bool {
     false
 }
 
-fn part1(data: &str) -> usize {
+fn part1(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
     let grid: Vec<Vec<char>> = lines.iter().map(|line| line.chars().collect()).collect();
-
-    // loop through the grid and get the coordinate range of each number and non-period character
-    let mut numbers: Vec<usize> = Vec::new();
+    let mut part_numbers: Vec<i32> = Vec::new();
 
     for (y, row) in grid.iter().enumerate() {
-        // println!("{} {:?}", y, row);
         let mut number: String = String::new();
         let mut is_part_number: bool = false;
 
@@ -98,9 +95,9 @@ fn part1(data: &str) -> usize {
             // If we've reached a non-digit or we've reached the end of the row
             // and we have a number
             if (!c.is_ascii_digit() || x == row.len() - 1) && !number.is_empty() {
-                // Add it to the numbers array if it's a part number
+                // Add it to the part_numbers array if it's a part number
                 if is_part_number || (c.is_ascii_digit() && is_adjacent(&grid, x, y)) {
-                    numbers.push(number.parse::<usize>().unwrap())
+                    part_numbers.push(number.parse::<i32>().unwrap())
                 }
                 // Reset number and is_part_number
                 number = String::new();
@@ -109,17 +106,15 @@ fn part1(data: &str) -> usize {
         }
     }
 
-    numbers.iter().sum()
+    part_numbers.iter().sum()
 }
 
-fn part2(_data: &str) -> usize {
-    // let lines: Vec<&str> = data.lines().collect();
+fn part2(data: &str) -> usize {
+    let lines: Vec<&str> = data.lines().collect();
+    let grid: Vec<Vec<char>> = lines.iter().map(|line| line.chars().collect()).collect();
+    let mut gear_ratios: Vec<usize> = Vec::new();
 
-    // for line in lines {
-    //     println!("{}", line);
-    // }
-
-    0
+    gear_ratios.iter().sum()
 }
 
 #[cfg(test)]
@@ -134,6 +129,6 @@ mod test {
 
     #[test]
     fn p2() {
-        assert_eq!(part2(INPUT), 0);
+        assert_eq!(part2(INPUT), 467835);
     }
 }
