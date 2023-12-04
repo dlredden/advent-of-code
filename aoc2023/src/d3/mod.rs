@@ -109,10 +109,215 @@ fn part1(data: &str) -> i32 {
     part_numbers.iter().sum()
 }
 
-fn part2(data: &str) -> usize {
+fn find_adjoining_numbers(grid: &Vec<Vec<char>>, x: usize, y: usize) -> Vec<i32> {
+    let columns = grid[0].len();
+    let rows = grid.len();
+    let mut adjoining_numbers: Vec<i32> = Vec::new();
+
+    // Look up if I can
+    if y > 0 {
+        // Look straight up
+        let up: char = grid[y - 1][x];
+        if up.is_ascii_digit() {
+            let mut num: String = char::to_string(&up);
+            // Get numbers to the left until we hit a non-digit or the edge
+            let mut x_left = x;
+            while x_left > 0 {
+                x_left -= 1;
+                let left = grid[y - 1][x_left];
+                if left.is_ascii_digit() {
+                    num.insert(0, left);
+                } else {
+                    break;
+                }
+            }
+            // Get numbers to the right until we hit a non-digit or the edge
+            let mut x_right = x;
+            while x_right < columns - 1 {
+                x_right += 1;
+                let right = grid[y - 1][x_right];
+                if right.is_ascii_digit() {
+                    num.push(right);
+                } else {
+                    break;
+                }
+            }
+            adjoining_numbers.push(num.parse::<i32>().unwrap());
+        } else {
+            // Look up-left if I can
+            if x > 0 {
+                let up_left = grid[y - 1][x - 1];
+                if up_left.is_ascii_digit() {
+                    let mut num: String = char::to_string(&up_left);
+                    // Get numbers to the left until we hit a non-digit or the edge
+                    let mut x_left = x - 1;
+                    while x_left > 0 {
+                        x_left -= 1;
+                        let left = grid[y - 1][x_left];
+                        if left.is_ascii_digit() {
+                            num.insert(0, left);
+                        } else {
+                            break;
+                        }
+                    }
+                    adjoining_numbers.push(num.parse::<i32>().unwrap());
+                }
+            }
+
+            // Look up-right if I can
+            if x < columns - 1 {
+                let up_right = grid[y - 1][x + 1];
+                if up_right.is_ascii_digit() {
+                    let mut num: String = char::to_string(&up_right);
+                    // Get numbers to the right until we hit a non-digit or the edge
+                    let mut x_right = x + 1;
+                    while x_right < columns - 1 {
+                        x_right += 1;
+                        let right = grid[y - 1][x_right];
+                        if right.is_ascii_digit() {
+                            num.push(right);
+                        } else {
+                            break;
+                        }
+                    }
+                    adjoining_numbers.push(num.parse::<i32>().unwrap());
+                }
+            }
+        }
+    }
+
+    // Look down if I can
+    if y < rows - 1 {
+        // Look straight down
+        let down = grid[y + 1][x];
+        if down.is_ascii_digit() {
+            let mut num: String = char::to_string(&down);
+            // Get numbers to the left until we hit a non-digit or the edge
+            let mut x_left = x;
+            while x_left > 0 {
+                x_left -= 1;
+                let left = grid[y + 1][x_left];
+                if left.is_ascii_digit() {
+                    num.insert(0, left);
+                } else {
+                    break;
+                }
+            }
+            // Get numbers to the right until we hit a non-digit or the edge
+            let mut x_right = x;
+            while x_right < columns - 1 {
+                x_right += 1;
+                let right = grid[y + 1][x_right];
+                if right.is_ascii_digit() {
+                    num.push(right);
+                } else {
+                    break;
+                }
+            }
+            adjoining_numbers.push(num.parse::<i32>().unwrap());
+        } else {
+            // Look down-left if I can
+            if x > 0 {
+                let down_left = grid[y + 1][x - 1];
+                if down_left.is_ascii_digit() {
+                    let mut num: String = char::to_string(&down_left);
+                    // Get numbers to the left until we hit a non-digit or the edge
+                    let mut x_left = x - 1;
+                    while x_left > 0 {
+                        x_left -= 1;
+                        let left = grid[y + 1][x_left];
+                        if left.is_ascii_digit() {
+                            num.insert(0, left);
+                        } else {
+                            break;
+                        }
+                    }
+                    adjoining_numbers.push(num.parse::<i32>().unwrap());
+                }
+            }
+
+            // Look down-right if I can
+            if x < columns - 1 {
+                let down_right = grid[y + 1][x + 1];
+                if down_right.is_ascii_digit() {
+                    let mut num: String = char::to_string(&down_right);
+                    // Get numbers to the right until we hit a non-digit or the edge
+                    let mut x_right = x + 1;
+                    while x_right < columns - 1 {
+                        x_right += 1;
+                        let right = grid[y + 1][x_right];
+                        if right.is_ascii_digit() {
+                            num.push(right);
+                        } else {
+                            break;
+                        }
+                    }
+                    adjoining_numbers.push(num.parse::<i32>().unwrap());
+                }
+            }
+        }
+    }
+
+    // Look left if I can
+    if x > 0 {
+        let left = grid[y][x - 1];
+        if left.is_ascii_digit() {
+            let mut num: String = char::to_string(&left);
+            // Get numbers to the left until we hit a non-digit or the edge
+            let mut x_left = x - 1;
+            while x_left > 0 {
+                x_left -= 1;
+                let left = grid[y][x_left];
+                if left.is_ascii_digit() {
+                    num.insert(0, left);
+                } else {
+                    break;
+                }
+            }
+            adjoining_numbers.push(num.parse::<i32>().unwrap());
+        }
+    }
+
+    // Look right if I can
+    if x < columns - 1 {
+        let right = grid[y][x + 1];
+        if right.is_ascii_digit() {
+            let mut num: String = char::to_string(&right);
+            // Get numbers to the right until we hit a non-digit or the edge
+            let mut x_right = x + 1;
+            while x_right < columns - 1 {
+                x_right += 1;
+                let right = grid[y][x_right];
+                if right.is_ascii_digit() {
+                    num.push(right);
+                } else {
+                    break;
+                }
+            }
+            adjoining_numbers.push(num.parse::<i32>().unwrap());
+        }
+    }
+
+    adjoining_numbers
+}
+
+fn part2(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
     let grid: Vec<Vec<char>> = lines.iter().map(|line| line.chars().collect()).collect();
-    let mut gear_ratios: Vec<usize> = Vec::new();
+    let mut gear_ratios: Vec<i32> = Vec::new();
+
+    for (y, row) in grid.iter().enumerate() {
+        for (x, c) in row.iter().enumerate() {
+            // If we've reached a digit
+            if c == &'*' {
+                let adjoining_numbers: Vec<i32> = find_adjoining_numbers(&grid, x, y);
+                // If we have adjoining numbers
+                if adjoining_numbers.len() == 2 {
+                    gear_ratios.push(adjoining_numbers[0] * adjoining_numbers[1]);
+                }
+            }
+        }
+    }
 
     gear_ratios.iter().sum()
 }
