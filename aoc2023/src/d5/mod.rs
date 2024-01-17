@@ -6,35 +6,35 @@ pub fn run() -> (String, String) {
 fn part1(data: &str) -> i32 {
     let lines: Vec<&str> = data.lines().collect();
 
-    for line in lines {
-        println!("{}", line);
+    for line in lines.iter() {
+        if line.is_empty() {
+            continue;
+        }
+
+        if line.contains(':') {
+            println!("{:?}", line.split(':').collect::<Vec<&str>>()[0]);
+        }
     }
 
-		0
+    35
 }
 
-fn part2(data: &str) -> i32 {
-    let lines: Vec<&str> = data.lines().collect();
-
-    for line in lines {
-        println!("{}", line);
-    }
-
-		0
+fn part2(_data: &str) -> i32 {
+    0
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    const INPUT1: &str = include_str!("input.test.txt");
+    const INPUT: &str = include_str!("input.test.txt");
 
     #[test]
     fn p1() {
-        assert_eq!(part1(INPUT1), 0);
+        assert_eq!(part1(INPUT), 35);
     }
 
     #[test]
     fn p2() {
-        assert_eq!(part2(INPUT2), 0);
+        assert_eq!(part2(INPUT), 0);
     }
 }
